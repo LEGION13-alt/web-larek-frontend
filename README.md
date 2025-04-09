@@ -1,6 +1,6 @@
 # Проектная работа "Веб-ларек"
 
-
+https://github.com/LEGION13-alt/mesto-project-ff.git
 
 Стек: HTML, SCSS, TS, Webpack
 
@@ -270,10 +270,11 @@ export interface IOrder extends IOrderForm {
 `constructor(container: HTMLFormElement, events: IEvents)` - принимает контейнер и брокер событий
 
 Поля:
-- `_buttons` - отображает элементы кнопок способа оплаты
+- `_buttonOnline`, `_buttonCash`  - отображают  кнопки выбора способа оплаты
 - `_address` - элемент инпута адреса
 
 Сеттеры:
+- `payment` - меняет классы кнопок в зависимости от выбранного способа оплаты
 - `address` -  меняет содержимое поля адреса в форме
 
 #### Класс `ContactsForm`

@@ -38,3 +38,5 @@ export interface IOrder extends IOrderForm {
 	total?: number;
 	items: string[];
 	}
+
+export type PaymentMethod = 'cash' | 'online';

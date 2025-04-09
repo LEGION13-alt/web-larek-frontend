@@ -1,34 +1,31 @@
-import {Model} from '../base/Model';
-import {IBasket, IProductItem ,IOrder,IOrderForm} from '../../types';
-import {EventEmitter} from '../base/events';
-
+import { Model } from '../base/Model';
+import { IBasket, IProductItem, IOrder, IOrderForm } from '../../types';
+import { EventEmitter } from '../base/events';
 
 export class ProductItem extends Model<IProductItem> {
-    id: string;
-    description: string;
-    image: string;
-    title: string;
-    category: string;
-    price: number | null;
-    index: number;
-}      
-
-export type CatalogChangeEvent = {
-    catalog : ProductItem[]
-};
-
-
-export interface IAppData{
-    catalog : ProductItem[]; 
-    items: string[];
-    total: number;
-    preview: string | null;
-    order: IOrder | null; 
+	id: string;
+	description: string;
+	image: string;
+	title: string;
+	category: string;
+	price: number | null;
+	index: number;
 }
 
+export type CatalogChangeEvent = {
+	catalog: ProductItem[];
+};
 
-export class AppData extends Model<IAppData>{
-	catalog : ProductItem[] = [];
+export interface IAppData {
+	catalog: ProductItem[];
+	items: string[];
+	total: number;
+	preview: string | null;
+	order: IOrder | null;
+}
+
+export class AppData extends Model<IAppData> {
+	catalog: ProductItem[] = [];
 	preview: ProductItem | null = null;
 	basket: IBasket = {
 		items: [],
@@ -40,16 +37,16 @@ export class AppData extends Model<IAppData>{
 		address: '',
 		payment: 'online',
 	};
-	
+
 	formErrors: Partial<Record<keyof IOrderForm, string>> = {};
 
 	constructor(data: Partial<{}>, events: EventEmitter) {
 		super(data, events);
 	}
 
-//карточки
+	//карточки
 	setCatalog(items: ProductItem[]) {
-		this.catalog = items.map(item => new ProductItem(item, this.events));
+		this.catalog = items.map((item) => new ProductItem(item, this.events));
 		this.events.emit('catalog:changed', { catalog: this.catalog });
 	}
 
@@ -58,7 +55,7 @@ export class AppData extends Model<IAppData>{
 		this.events.emit('preview:change', item);
 	}
 
-//корзина
+	//корзина
 
 	isInBasket(item: ProductItem) {
 		return this.basket.items.includes(item.id);
@@ -74,9 +71,9 @@ export class AppData extends Model<IAppData>{
 		const index = this.basket.items.indexOf(item.id);
 		if (index >= 0) {
 			this.basket.items.splice(index, 1);
-		this.basket.total = this.getTotal() - item.price;
-		this.events.emit('basket:changed', this.basket.items);
-	}
+			this.basket.total = this.getTotal() - item.price;
+			this.events.emit('basket:changed', this.basket.items);
+		}
 	}
 
 	clearBasket() {
@@ -90,37 +87,35 @@ export class AppData extends Model<IAppData>{
 	}
 
 	getTotal() {
-    return this.basket.total;
-}
+		return this.basket.total;
+	}
 
-//заказ
+	//заказ
 
-
-setOrderField(field: keyof IOrderForm, value: string) {
-    if (field === 'payment') {
-        this.order.payment = value;  
-    } 
-    if (field === 'address') {
-        this.order.address = value;
-    }
-    this.validateOrder()
-}
-
+	setOrderField(field: keyof IOrderForm, value: string) {
+		if (field === 'payment') {
+			this.order.payment = value;
+		}
+		if (field === 'address') {
+			this.order.address = value;
+		}
+		this.validateOrder();
+	}
 
 	setContactsField(field: keyof IOrderForm, value: string) {
 		if (field === 'phone') {
 			this.order.phone = value;
-		} 
+		}
 		if (field === 'email') {
 			this.order.email = value;
-		} 
-		this.validateContacts()
+		}
+		this.validateContacts();
 	}
 
-//валидация
+	//валидация
 
-	validateOrder(){
-        const errors: typeof this.formErrors = {};
+	validateOrder() {
+		const errors: typeof this.formErrors = {};
 		if (!this.order.address) {
 			errors.address = 'Необходимо указать адрес';
 		}
@@ -133,28 +128,27 @@ setOrderField(field: keyof IOrderForm, value: string) {
 		return Object.keys(errors).length === 0;
 	}
 
+	validateContacts() {
+		const errors: typeof this.formErrors = {};
+		if (!this.order.email) {
+			errors.email = 'Необходимо указать email';
+		}
+		if (!this.order.phone) {
+			errors.phone = 'Необходимо указать телефон';
+		}
 
-    validateContacts() {
-        const errors: typeof this.formErrors = {};
-        if (!this.order.email) {
-            errors.email = 'Необходимо указать email';
-        }
-        if (!this.order.phone) {
-            errors.phone = 'Необходимо указать телефон';
-        }
-
-        this.formErrors = errors;
-        this.events.emit('contactsFormErrors:change', this.formErrors);
-        return Object.keys(errors).length === 0;
-    }
+		this.formErrors = errors;
+		this.events.emit('contactsFormErrors:change', this.formErrors);
+		return Object.keys(errors).length === 0;
+	}
 
 	getOrder(): IOrder {
-		return { 
+		return {
 			...this.order,
-			items: this.basket.items, 
-			total: this.basket.total
-			}     
-		}
+			items: this.basket.items,
+			total: this.basket.total,
+		};
+	}
 
 	clearOrder() {
 		this.order = {
