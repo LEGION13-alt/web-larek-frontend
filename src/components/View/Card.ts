@@ -19,11 +19,11 @@ export class Card extends Component<CardData> {
 	protected _button?: HTMLButtonElement;
 
     categories: Record<string, string> = {
-        'другое': 'card__category_other',
-        'софт-скил': 'card__category_soft',
-        'дополнительное': 'card__category_additional',
-        'кнопка': 'card__category_button',
-        'хард-скил': 'card__category_hard',
+        'другое': 'other',
+        'софт-скил': 'soft',
+        'дополнительное': 'additional',
+        'кнопка': 'button',
+        'хард-скил': 'hard',
     }
 
 	constructor(protected container: HTMLElement, actions?: ICardActions) {
@@ -89,7 +89,7 @@ export class Card extends Component<CardData> {
 	//категория
 	set category(value: string) {
 		this.setText(this._category, value);
-		this._category.classList.add(`${this.categories[value]}`);
+		this._category.className =  `card__category card__category_${this.categories[value]}`;
 	}
 
 	get category(): string {
